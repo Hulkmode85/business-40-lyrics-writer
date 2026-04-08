@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LyricForge AI — AI Song Lyrics Writer</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a0f;color:#e0e0e0;min-height:100vh}
+        .header{background:linear-gradient(135deg,#1a0a1f,#0a0a1f);border-bottom:1px solid #2e1a2e;padding:20px 40px;display:flex;justify-content:space-between;align-items:center}
+        .logo{font-size:24px;font-weight:700;color:#f472b6}.logo span{color:#ec4899}
+        nav a{color:#9ca3af;text-decoration:none;margin-left:24px;font-size:14px;transition:color .2s}nav a:hover{color:#f472b6}
+        .container{max-width:900px;margin:40px auto;padding:0 20px}
+        h1{font-size:32px;text-align:center;margin-bottom:8px;background:linear-gradient(to right,#f472b6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .subtitle{text-align:center;color:#9ca3af;margin-bottom:32px;font-size:15px}
+        .form-card{background:#111118;border:1px solid #1e1e2e;border-radius:16px;padding:32px}
+        .form-group{margin-bottom:16px}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+        label{display:block;font-size:13px;color:#9ca3af;margin-bottom:6px;font-weight:500}
+        input,select,textarea{width:100%;padding:12px 16px;background:#0a0a14;border:1px solid #2a2a3e;border-radius:10px;color:#e0e0e0;font-size:14px;outline:none;transition:border-color .2s}
+        input:focus,select:focus,textarea:focus{border-color:#ec4899}
+        textarea{resize:vertical;min-height:80px}
+        .examples{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+        .examples button{background:#1e1e2e;border:1px solid #2a2a3e;color:#9ca3af;padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;transition:all .2s}
+        .examples button:hover{border-color:#ec4899;color:#f472b6}
+        .btn{width:100%;padding:14px;background:linear-gradient(135deg,#ec4899,#f472b6);color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .2s;margin-top:8px}
+        .btn:hover{opacity:.9}.btn:disabled{opacity:.5;cursor:not-allowed}
+        .output{margin-top:24px;background:#111118;border:1px solid #1e1e2e;border-radius:16px;padding:32px;display:none}
+        .output h2{font-size:20px;color:#f472b6;margin-bottom:16px}
+        .output pre{white-space:pre-wrap;font-family:'Cascadia Code','Fira Code',monospace;line-height:1.7;font-size:14px;color:#d0d0d0}
+        .copy-btn{background:#1e1e2e;color:#f472b6;border:1px solid #2a2a3e;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;margin-top:12px}.copy-btn:hover{background:#2a2a3e}
+        .spinner{display:inline-block;width:18px;height:18px;border:2px solid #fff3;border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:8px}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .error{color:#f87171;margin-top:12px;font-size:14px}
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">LyricForge <span>AI</span></div>
+        <nav><a href="/docs">Pricing</a><a href="/docs">API</a></nav>
+    </div>
+    <div class="container">
+        <h1>Write Song Lyrics with AI</h1>
+        <p class="subtitle">Describe your song idea. Get complete, original lyrics with structure, rhyme schemes, and production notes.</p>
+        <div class="form-card">
+            <div class="form-group">
+                <label>What's your song about?</label>
+                <textarea id="topic" placeholder="e.g., Moving to a new city alone and finding yourself, the excitement mixed with loneliness"></textarea>
+            </div>
+            <div class="examples">
+                <button onclick="setExample('Falling in love on a summer road trip')">Summer love</button>
+                <button onclick="setExample('Breaking free from a toxic relationship')">Breaking free</button>
+                <button onclick="setExample('Late nights grinding to build a dream')">Hustle anthem</button>
+                <button onclick="setExample('Missing home while living abroad')">Homesick</button>
+                <button onclick="setExample('Dancing alone in your room at 2am')">Night vibes</button>
+                <button onclick="setExample('Growing up and realizing your parents were right')">Growing up</button>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Genre</label>
+                    <select id="genre">
+                        <option value="pop">Pop</option>
+                        <option value="hip-hop/rap">Hip-Hop / Rap</option>
+                        <option value="R&B">R&B</option>
+                        <option value="rock">Rock</option>
+                        <option value="country">Country</option>
+                        <option value="indie/alternative">Indie / Alternative</option>
+                        <option value="electronic/EDM">Electronic / EDM</option>
+                        <option value="folk">Folk</option>
+                        <option value="jazz">Jazz</option>
+                        <option value="metal">Metal</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Mood</label>
+                    <select id="mood">
+                        <option value="upbeat and energetic">Upbeat & Energetic</option>
+                        <option value="melancholic and reflective">Melancholic & Reflective</option>
+                        <option value="angry and intense">Angry & Intense</option>
+                        <option value="romantic and tender">Romantic & Tender</option>
+                        <option value="chill and laid-back">Chill & Laid-Back</option>
+                        <option value="empowering and anthemic">Empowering & Anthemic</option>
+                        <option value="dark and moody">Dark & Moody</option>
+                        <option value="nostalgic and bittersweet">Nostalgic & Bittersweet</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Song Structure</label>
+                <select id="structure">
+                    <option value="verse-chorus-verse-chorus-bridge-chorus">Standard (Verse-Chorus-Verse-Chorus-Bridge-Chorus)</option>
+                    <option value="verse-verse-chorus-verse-chorus">AABA Classic</option>
+                    <option value="verse-prechorus-chorus-verse-prechorus-chorus-bridge-chorus">With Pre-Chorus</option>
+                    <option value="intro-verse-hook-verse-hook-bridge-hook-outro">Hook-Based (Hip-Hop)</option>
+                    <option value="verse-chorus-verse-chorus-outro">Short & Sweet</option>
+                </select>
+            </div>
+            <button class="btn" id="genBtn" onclick="generate()">Write My Lyrics</button>
+            <div class="error" id="error"></div>
+        </div>
+        <div class="output" id="output">
+            <h2>Your Song</h2>
+            <pre id="result"></pre>
+            <button class="copy-btn" onclick="copyResult()">Copy to Clipboard</button>
+        </div>
+    </div>
+    <script>
+        function setExample(text){document.getElementById('topic').value=text}
+        async function generate(){
+            const btn=document.getElementById('genBtn');
+            const topic=document.getElementById('topic').value.trim();
+            if(!topic){document.getElementById('error').textContent='Please describe what your song is about.';return}
+            document.getElementById('error').textContent='';
+            btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Writing lyrics...';
+            document.getElementById('output').style.display='none';
+            try{
+                const r=await fetch('/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:topic,genre:document.getElementById('genre').value,mood:document.getElementById('mood').value,structure:document.getElementById('structure').value})});
+                const d=await r.json();
+                if(d.error)throw new Error(d.error);
+                document.getElementById('result').textContent=d.result;
+                document.getElementById('output').style.display='block';
+            }catch(e){document.getElementById('error').textContent='Error: '+e.message}
+            finally{btn.disabled=false;btn.textContent='Write My Lyrics'}
+        }
+        function copyResult(){navigator.clipboard.writeText(document.getElementById('result').textContent);const b=event.target;b.textContent='Copied!';setTimeout(()=>b.textContent='Copy to Clipboard',2000)}
+    </script>
+</body>
+</html>
